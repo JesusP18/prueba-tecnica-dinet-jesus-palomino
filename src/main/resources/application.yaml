@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: dinet-pedidos
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pedidos_db
+    username: postgres
+    password: 123456
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 500
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+        jdbc.batch_versioned_data: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/dinet
+
+app:
+  batch:
+    size: 500
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.dinet.pedidos: INFO
+    org.springframework.security: DEBUG
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    oauth:
+      client-id: dinet-pedidos
+      use-pkce: false
