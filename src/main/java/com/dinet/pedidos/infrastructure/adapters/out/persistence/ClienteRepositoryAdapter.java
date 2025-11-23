@@ -21,7 +21,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
                 .map(this::toDomain);
     }
 
-    private Cliente toDomain(ClienteEntity entity) {
+    public Cliente toDomain(ClienteEntity entity) {
         return new Cliente(entity.getId(), entity.isActivo());
     }
 }

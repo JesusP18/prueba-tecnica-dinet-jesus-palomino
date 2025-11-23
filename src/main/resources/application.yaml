@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/pedidos_db
-    username: postgres
-    password: 123456
+    username: postgres # ajustar usuario según tu configuración
+    password: 123456 # ajustar password según tu configuración
     hikari:
       maximum-pool-size: 10
 

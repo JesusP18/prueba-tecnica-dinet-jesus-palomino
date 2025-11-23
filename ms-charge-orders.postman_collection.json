@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "023b5a72-50cb-481f-98bf-0d33ab514a98",
+		"name": "ms-charge-orders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16696769",
+		"_collection_link": "https://test55-2889.postman.co/workspace/DINET~3722c2f4-f660-441a-a335-d13f0b95cdbe/collection/16696769-023b5a72-50cb-481f-98bf-0d33ab514a98?action=share&source=collection_link&creator=16696769"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "dinet-pedidos",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8081/realms/dinet/protocol/openid-connect/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"realms",
+						"dinet",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "carga-pedidos",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJOZDBsb2RQdk5MUVZrTzV0b3R0VzdKcG5JdEdyRjI0QVNYTU1uOHFXSExJIn0.eyJleHAiOjE3NjM4NDYxNTksImlhdCI6MTc2Mzg0NTg1OSwianRpIjoiY2RiYzRjZjEtMWE2NC00ZDI1LTgwMzctMjk2Yjg3NmU3OWU3IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kaW5ldCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI2NGQ5ODZjMy01YWYzLTQxNTEtYThjOC05MGZjNWQzNjRjZmMiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJkaW5ldC1wZWRpZG9zIiwic2Vzc2lvbl9zdGF0ZSI6ImQxZGExNzZhLWMxYjctNGEyZi05OWU3LWM4ZmY3ZTQwMGJmMyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtZGluZXQiXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJzaWQiOiJkMWRhMTc2YS1jMWI3LTRhMmYtOTllNy1jOGZmN2U0MDBiZjMiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJhZG1pbiBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6ImFkbWluIiwiZmFtaWx5X25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZGluZXQuY29tIn0.LYm_8j4ktay2PJRqff4uGiiHghCA_vPpaFO8dOFhkMKPzVE45y55SM2p0vn_gP8HrTHFvwU0OftB3K8RTls8TKbiNcuMWbIpVkqOnndr_C1AHsQ9cwH-iVvlDdDulvEa2Nv0ix907s0N_Hsp-loc4Ad384P7MWzEoUn4BxUoKp7YmU33OSPOMN_x3QU7qv5DLOrJ8UnKlFzDA1n_evQ7Z9hfehAruBiGhwuuygOUVjaULyL4zpfiFZArW3meF7rlKiQfZHMSBe_NTPPJIxKrdEsRlUd3UfEF68x7oEgeUGZJ_vixIoTsmzuKWZNuMz11sCfdnzWNn21FzVzXP-KQ1Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <token>"
+					},
+					{
+						"key": "Idempotency-Key",
+						"value": "test-123"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/Jesus/Downloads/test.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/pedidos/cargar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pedidos",
+						"cargar"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

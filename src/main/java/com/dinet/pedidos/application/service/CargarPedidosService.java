@@ -26,8 +26,10 @@ import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -41,8 +43,7 @@ public class CargarPedidosService implements CargarPedidosUseCase {
     @Value("${app.batch.size:500}")
     private int batchSize;
 
-    // Tamaño del lote configurable
-    private static final int BATCH_SIZE = 500;
+    // Tamaño por defecto eliminado en favor de la propiedad
 
     @Override
     @Transactional
@@ -59,6 +60,7 @@ public class CargarPedidosService implements CargarPedidosUseCase {
 
         CargaPedidosResult result = new CargaPedidosResult();
         List<Pedido> pedidosValidos = new ArrayList<>();
+        Set<String> seenNumeroPedidos = new HashSet<>(); // para detectar duplicados en el archivo
 
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
@@ -70,17 +72,31 @@ public class CargarPedidosService implements CargarPedidosUseCase {
                 lineNumber++;
                 try {
                     Pedido pedido = parsePedidoFromRecord(record);
+                    // Validaciones de dominio
                     pedidoDomainService.validarPedido(pedido);
-                    // También validar duplicado por numeroPedido en la base de datos?
-                    if (pedidoRepository.existsByNumeroPedido(pedido.getNumeroPedido())) {
-                        result.agregarError(new ErrorProcesamiento(lineNumber, "Numero de pedido duplicado", "DUPLICADO"));
-                    } else {
-                        pedidosValidos.add(pedido);
+
+                    String numeroPedido = pedido.getNumeroPedido();
+
+                    // Validar duplicado dentro del mismo archivo
+                    if (seenNumeroPedidos.contains(numeroPedido)) {
+                        result.agregarError(new ErrorProcesamiento(lineNumber, "Numero de pedido duplicado en el archivo: " + numeroPedido, "DUPLICADO_EN_ARCHIVO"));
+                        continue;
                     }
+
+                    // Validar duplicado en la base de datos
+                    if (pedidoRepository.existsByNumeroPedido(numeroPedido)) {
+                        result.agregarError(new ErrorProcesamiento(lineNumber, "Numero de pedido ya existe en la base de datos: " + numeroPedido, "DUPLICADO"));
+                        continue;
+                    }
+
+                    // Si pasa validaciones, marcar como visto y añadir a lista a persistir
+                    seenNumeroPedidos.add(numeroPedido);
+                    pedidosValidos.add(pedido);
+
                 } catch (Exception e) {
                     // Capturar excepciones de validación y agregar al resultado
-                    String errorCode = (e instanceof com.dinet.pedidos.domain.exception.PedidoValidationException) 
-                            ? ((com.dinet.pedidos.domain.exception.PedidoValidationException) e).getErrorCode() 
+                    String errorCode = (e instanceof com.dinet.pedidos.domain.exception.PedidoValidationException)
+                            ? ((com.dinet.pedidos.domain.exception.PedidoValidationException) e).getErrorCode()
                             : "ERROR_DESCONOCIDO";
                     result.agregarError(new ErrorProcesamiento(lineNumber, e.getMessage(), errorCode));
                 }
@@ -97,13 +113,13 @@ public class CargarPedidosService implements CargarPedidosUseCase {
                 return result;
             }
 
-            // Validar rango permitido
+            // Validar rango permitido y usar batchSize configurado
             int effectiveBatchSize = Math.max(500, Math.min(batchSize, 1000));
 
             // Guardar en lotes sólo si no hubo errores
             int total = pedidosValidos.size();
-            for (int i = 0; i < total; i += BATCH_SIZE) {
-                List<Pedido> lote = pedidosValidos.subList(i, Math.min(total, i + BATCH_SIZE));
+            for (int i = 0; i < total; i += effectiveBatchSize) {
+                List<Pedido> lote = pedidosValidos.subList(i, Math.min(total, i + effectiveBatchSize));
                 pedidoRepository.saveAll(lote);
             }
 
@@ -127,7 +143,7 @@ public class CargarPedidosService implements CargarPedidosUseCase {
         return result;
     }
 
-    private String calculateFileHash(MultipartFile file) {
+    public String calculateFileHash(MultipartFile file) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(file.getBytes());
@@ -149,7 +165,7 @@ public class CargarPedidosService implements CargarPedidosUseCase {
         return hexString.toString();
     }
 
-    private Pedido parsePedidoFromRecord(CSVRecord record) {
+    public Pedido parsePedidoFromRecord(CSVRecord record) {
         String numeroPedido = getField(record, "numeroPedido");
         String clienteId = getField(record, "clienteId");
         String fechaEntregaStr = getField(record, "fechaEntrega");

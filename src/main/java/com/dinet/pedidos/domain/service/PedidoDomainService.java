@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.regex.Pattern;
 
 /**
@@ -25,6 +26,9 @@ public class PedidoDomainService {
 
     private final ClienteRepositoryPort clienteRepository;
     private final ZonaRepositoryPort zonaRepository;
+
+    // Constante para la zona horaria requerida por la regla de negocio
+    private static final ZoneId BUSINESS_ZONE = ZoneId.of("America/Lima");
 
     /**
      * Valida todas las reglas del dominio para un pedido.
@@ -75,9 +79,10 @@ public class PedidoDomainService {
             throw new PedidoValidationException("FECHA_INVALIDA", "fechaEntrega es obligatoria");
         }
 
-        LocalDate hoy = LocalDate.now();
+        // Usar la zona horaria de negocio (America/Lima) para comparar la fecha actual
+        LocalDate hoy = LocalDate.now(BUSINESS_ZONE);
         if (fechaEntrega.isBefore(hoy)) {
-            throw new PedidoValidationException("FECHA_INVALIDA", "fechaEntrega no puede ser anterior a la fecha actual");
+            throw new PedidoValidationException("FECHA_INVALIDA", "fechaEntrega no puede ser anterior a la fecha actual (America/Lima)");
         }
     }
 
