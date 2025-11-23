@@ -22,7 +22,7 @@ public class ZonaRepositoryAdapter implements ZonaRepositoryPort {
                 .map(this::toDomain);
     }
 
-    private Zona toDomain(ZonaEntity entity) {
+    public Zona toDomain(ZonaEntity entity) {
         return new Zona(entity.getId(), entity.isSoporteRefrigeracion());
     }
 }

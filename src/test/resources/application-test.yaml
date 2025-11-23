@@ -1,0 +1,88 @@
+# src/test/resources/application-test.yml
+spring:
+  application:
+    name: dinet-pedidos-test
+
+  # Configuración de base de datos H2 para pruebas
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # En pruebas usamos create-drop
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 500
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+        jdbc.batch_versioned_data: true
+    show-sql: true  # Útil para debugging en pruebas
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # Deshabilitar Flyway en pruebas o configurar para H2
+  flyway:
+    enabled: false
+
+  # DESHABILITAR SEGURIDAD EN PRUEBAS
+  security:
+    enabled: false
+    oauth2:
+      resourceserver:
+        jwt:
+          enabled: false
+
+  # Excluir autoconfiguraciones de seguridad
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
+
+# Configuración para deshabilitar seguridad
+security:
+  basic:
+    enabled: false
+  oauth2:
+    enabled: false
+
+# Configuración de la aplicación para pruebas
+app:
+  batch:
+    size: 500
+
+# Configuración de logging para pruebas
+logging:
+  level:
+    com.dinet.pedidos: DEBUG
+    org.springframework.security: OFF  # Desactivar logs de seguridad
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Configuración de SpringDoc para pruebas
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    # Deshabilitar seguridad en Swagger para pruebas
+    oauth:
+      enabled: false
+
+  # H2 Console (opcional, para debugging)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.util.UUID;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -23,7 +25,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode(ex.getErrorCode());
         errorResponse.setMessage(ex.getMessage());
-        errorResponse.setCorrelationId(MDC.get("correlationId"));
+        errorResponse.setCorrelationId(getCorrelationId());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -32,7 +34,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("ARGUMENTO_INVALIDO");
         errorResponse.setMessage(ex.getMessage());
-        errorResponse.setCorrelationId(MDC.get("correlationId"));
+        errorResponse.setCorrelationId(getCorrelationId());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -41,7 +43,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("HEADER_FALTANTE");
         errorResponse.setMessage("Header requerido faltante: " + ex.getHeaderName());
-        errorResponse.setCorrelationId(MDC.get("correlationId"));
+        errorResponse.setCorrelationId(getCorrelationId());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -49,8 +51,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("ARCHIVO_DEMASIADO_GRANDE");
-        errorResponse.setMessage("El archivo excede el tamaño máximo permitido: " + ex.getMessage());
-        errorResponse.setCorrelationId(MDC.get("correlationId"));
+        errorResponse.setMessage("El archivo excede el tamaño máximo permitido");
+        errorResponse.setCorrelationId(getCorrelationId());
         return new ResponseEntity<>(errorResponse, HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("CARGA_DUPLICADA");
         errorResponse.setMessage(ex.getMessage());
-        errorResponse.setCorrelationId(MDC.get("correlationId"));
+        errorResponse.setCorrelationId(getCorrelationId());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
@@ -69,7 +71,19 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("ERROR_INTERNO");
         errorResponse.setMessage("Error interno del servidor");
-        errorResponse.setCorrelationId(MDC.get("correlationId"));
+        errorResponse.setCorrelationId(getCorrelationId());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Obtiene el correlationId del MDC o genera uno nuevo si no existe
+     */
+    public String getCorrelationId() {
+        String correlationId = MDC.get("correlationId");
+        if (correlationId == null || correlationId.trim().isEmpty()) {
+            correlationId = "gen-" + UUID.randomUUID().toString();
+            logger.warn("CorrelationId no encontrado en MDC, generando uno nuevo: {}", correlationId);
+        }
+        return correlationId;
     }
 }

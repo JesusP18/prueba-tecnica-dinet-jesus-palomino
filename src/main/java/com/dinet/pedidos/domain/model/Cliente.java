@@ -8,8 +8,8 @@ import java.util.Objects;
  */
 public class Cliente {
 
-    private final String id;
-    private final boolean activo;
+    private String id;
+    private boolean activo;
 
     public Cliente(String id, boolean activo) {
         this.id = id;

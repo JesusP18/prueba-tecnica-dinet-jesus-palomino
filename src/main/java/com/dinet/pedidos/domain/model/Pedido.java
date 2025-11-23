@@ -16,15 +16,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Pedido {
 
-    private final UUID id;
-    private final String numeroPedido;
-    private final String clienteId;
-    private final String zonaId;
-    private final LocalDate fechaEntrega;
-    private final EstadoPedido estado;
-    private final boolean requiereRefrigeracion;
+    private UUID id;
+    private String numeroPedido;
+    private String clienteId;
+    private String zonaId;
+    private LocalDate fechaEntrega;
+    private EstadoPedido estado;
+    private boolean requiereRefrigeracion;
 
     @Override
     public boolean equals(Object o) {

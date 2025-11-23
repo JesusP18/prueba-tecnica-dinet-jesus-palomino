@@ -40,7 +40,7 @@ public class PedidoRepositoryAdapter implements PedidoRepositoryPort {
         return pedidoJpaRepository.existsByNumeroPedido(numeroPedido);
     }
 
-    private PedidoEntity toEntity(Pedido pedido) {
+    public PedidoEntity toEntity(Pedido pedido) {
         PedidoEntity entity = new PedidoEntity();
         entity.setId(pedido.getId());
         entity.setNumeroPedido(pedido.getNumeroPedido());
@@ -54,7 +54,7 @@ public class PedidoRepositoryAdapter implements PedidoRepositoryPort {
         return entity;
     }
 
-    private Pedido toDomain(PedidoEntity entity) {
+    public Pedido toDomain(PedidoEntity entity) {
         return new Pedido(
                 entity.getId(),
                 entity.getNumeroPedido(),

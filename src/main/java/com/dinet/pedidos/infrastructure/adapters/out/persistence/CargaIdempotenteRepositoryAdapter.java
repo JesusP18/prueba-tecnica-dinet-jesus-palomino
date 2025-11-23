@@ -28,7 +28,7 @@ public class CargaIdempotenteRepositoryAdapter implements CargaIdempotenteReposi
         return toDomain(entity);
     }
 
-    private CargaIdempotenteEntity toEntity(CargaIdempotente domain) {
+    public CargaIdempotenteEntity toEntity(CargaIdempotente domain) {
         CargaIdempotenteEntity entity = new CargaIdempotenteEntity();
         entity.setId(domain.getId() != null ? domain.getId() : UUID.randomUUID());
         entity.setIdempotencyKey(domain.getIdempotencyKey());
@@ -38,7 +38,7 @@ public class CargaIdempotenteRepositoryAdapter implements CargaIdempotenteReposi
         return entity;
     }
 
-    private CargaIdempotente toDomain(CargaIdempotenteEntity entity) {
+    public CargaIdempotente toDomain(CargaIdempotenteEntity entity) {
         return new CargaIdempotente(
                 entity.getId(),
                 entity.getIdempotencyKey(),

@@ -9,8 +9,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://host.docker.internal:5432/keycloak_db
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: 123456
+      KC_DB_USERNAME: postgres # ajustar usuario según tu configuración
+      KC_DB_PASSWORD: 123456 # ajustar password según tu configuración
       KC_HTTP_ENABLED: true
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
