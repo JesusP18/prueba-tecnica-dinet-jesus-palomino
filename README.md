@@ -219,7 +219,7 @@ Headers obligatorios:
 
 Body: form-data con campo `file` conteniendo el CSV.
 
-En la raíz del proyecto hay un archivo de ejemplo `test.csv` para pruebas.
+En la raíz del proyecto hay un archivo de ejemplo dentro de la carpeta samples `test.csv` para pruebas.
 
 Ejemplo (curl):
 
